@@ -24,7 +24,6 @@ SW_GET_HD_MTIME = "x-object-meta-mtime"
 
 dotenv.load_dotenv()
 LOG = logging.getLogger(__name__)
-CONTAINER = c.SWIFT_CONTAINER
 __AUTH = {
     "auth_version": os.environ.get("OS_IDENTITY_API_VERSION", "3"),
     "os_username": os.environ.get("OS_USERNAME"),
@@ -85,7 +84,7 @@ def add_object(swift: service.SwiftService, content: bytes) -> c.T_RESPONSE:
                 new_hash = ""
                 continue
         new_object = service.SwiftUploadObject(content, new_hash)
-        for response in swift.upload(CONTAINER, [new_object]):
+        for response in swift.upload(c.SWIFT_CONTAINER, [new_object]):
             if response[SW_UL_ACTION] != SW_UL_ACTION_UPLOAD:
                 continue
             if response[SW_SUCCESS]:
@@ -94,7 +93,7 @@ def add_object(swift: service.SwiftService, content: bytes) -> c.T_RESPONSE:
 
 @get_client
 def drop_object(swift: service.SwiftService, name: str) -> c.T_RESPONSE:
-    for page in swift.delete(container=CONTAINER, objects=[name]):
+    for page in swift.delete(container=c.SWIFT_CONTAINER, objects=[name]):
         if not page[SW_SUCCESS]:
             return fail(page[SW_ERROR])
         return good(c.RESP_STATUS_DELETED)
@@ -103,7 +102,7 @@ def drop_object(swift: service.SwiftService, name: str) -> c.T_RESPONSE:
 @get_client
 def get_object(swift: service.SwiftService, object_names: list[str]) -> c.T_RESPONSE:
     contents = []
-    for page in swift.download(container=CONTAINER, objects=list(object_names)):
+    for page in swift.download(container=c.SWIFT_CONTAINER, objects=list(object_names)):
         if not page[SW_SUCCESS]:
             LOG.error(c.SW_ERR_GET_META, str(page[SW_ERROR]))
             return fail(page[SW_ERROR])
@@ -122,7 +121,7 @@ def get_object(swift: service.SwiftService, object_names: list[str]) -> c.T_RESP
 
 @get_client
 def download_content(swift: service.SwiftService, name: str) -> c.T_RESPONSE:
-    for page in swift.download(container=CONTAINER, objects=[name]):
+    for page in swift.download(container=c.SWIFT_CONTAINER, objects=[name]):
         if not page[SW_SUCCESS]:
             LOG.error(c.SW_ERR_DL_CONTENT, str(page[SW_ERROR]))
             print(page)
