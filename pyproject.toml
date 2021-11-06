@@ -6,14 +6,35 @@ authors = ["Will Siddall <will.siddall@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+# OpenStack
 python-swiftclient = "^3.12.0"
-Flask = "^2.0.2"
-python-dotenv = "^0.19.1"
 python-keystoneclient = "^4.3.0"
+# Server/DB
+Flask = "^2.0.2"
 psycopg2-binary = "^2.9.1"
 alembic = "^1.7.4"
+gunicorn = {version = "^20.1.0", optional = true}
+# Support
+python-dotenv = "^0.19.1"
+poethepoet = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.extras]
+prod = ["gunicorn"]
+
+[tool.poe.tasks]
+init_db    = "alembic upgrade head"
+dev        = { cmd="python -m flask run -p 5001", env = { FLASK_ENV="development", FLASK_DEBUG="1" }}
+run        = "python -m gunicorn -w 5 $FLASK_APP:app"
+deploy     = [
+    { ref = "init_db" },
+    { cmd = "poetry install -E prod"},
+    { ref = "run" }
+]
+
+[tool.poe.env]
+FLASK_APP = "server"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

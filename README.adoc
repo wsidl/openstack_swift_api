@@ -1,0 +1,79 @@
+= Training Project for OpenStack Swift
+:author: wsidl
+
+This project is used to explore the use of using https://www.openstack.org/software/releases/xena/components/swift[OpenStack STaaS solution, Swift] as a storage medium while building additional features on top for greater functionality. The features provided are:
+
+- Simple interface for maintaining objects stored in Swift.
+- Create a Metadata Database that attaches Key/Value Tags to each object.
+- Provide a Web UI / REST API that manages the interactions between Swift and the Metadata Database. These provide:
+* Upload/Create functionality (automatically creates a `format` tag with the extension of the uploaded file)
+* Lists available objects
+* Searches database by Object name
+* Delete Objects
+* Download Objects
+* Update Metadata Tags and Values
+
+== Install Project
+
+This project uses https://python-poetry.org/[Poetry] for managing dependencies. Setting up the project requires having Poetry installed first before pulling in the project dependencies
+
+Any command run for this project are constructed using https://github.com/nat-n/poethepoet[PoeThePoet] task runners
+
+=== Environment Variables
+
+All utilities leverage multiple environment variables providing access to the local environment.
+
+The project provides a choice of supplying Environment Variables as process environment or via a local `.env` file.
+
+==== PostgreSQL Connection Details
+
+PG_USER:: Username credential for connecting to the database
+PG_PASSWORD:: Password credential associated with *PG_USER* for connecting to the database
+PG_HOST:: Target host address serving PostgreSQL
+PG_PORT:: Port number for the database (default: `5432`)
+PG_DBNAME:: Database instance name within the PostgreSQL Server
+
+==== OpenStack Credentials
+
+These are environment variables used by the OpenStack Python SDK for authenticating and connecting to the cloud services. A Credentials file can be downloaded from an existing cloud with these environment variables defined.
+
+OS_AUTH_URL:: Keystone Identity authentication address
+OS_PROJECT_ID:: Project ID  where Swift Object Container will be created (optional if `OS_PROJECT_NAME` is used)
+OS_PROJECT_NAME:: Project Name where Swift Object Container will be created (optional if `OS_PROJECT_ID` is used)
+OS_USER_DOMAIN_NAME:: Domain name where the target project resides (optional if `OS_PROJECT_DOMAIN_ID` is used)
+OS_PROJECT_DOMAIN_ID:: Domain ID where the target project resides (optional if `OS_USER_DOMAIN_NAME` is used)
+OS_USERNAME:: Keystone User account for accessing the target project.
+OS_PASSWORD:: Keystone User Password used with `OS_USERNAME`
+OS_REGION_NAME:: Cloud Region to connect
+OS_INTERFACE:: Keystone Interface type for identifying where requests are originating
+OS_IDENTITY_API_VERSION:: Keystone API Identifier (expecting `3`)
+
+=== Install Poetry
+
+[source,bash]
+pip install --upgrade pip
+pip install poetry
+
+=== Install Project Dependencies
+
+[source,bash]
+poetry install
+
+=== Create/Upgrade Database
+
+[source,bash]
+poe init_db
+
+=== Start Dev Server
+
+[source,bash]
+poe dev
+
+Command will start a Flask Server in a Development State and Debug turned on
+
+=== Start Prod Server
+
+[source,bash]
+poe deploy
+
+Command will perform the Database Init/upgrade and start a production-grade server

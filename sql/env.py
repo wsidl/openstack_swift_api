@@ -5,6 +5,11 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import os
+import dotenv
+
+dotenv.load_dotenv()
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -56,8 +61,16 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    alembic_section = config.get_section(config.config_ini_section)
+    alembic_section["sqlalchemy.url"] = alembic_section["sqlalchemy.url"].format(
+        username=os.environ.get("PG_USER"),
+        password=os.environ.get("PG_PASSWORD"),
+        host=os.environ.get("PG_HOST", "127.0.0.1"),
+        port=int(os.environ.get("PG_PORT", 5432)),
+        db=os.environ.get("PG_DBNAME")
+    )
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        alembic_section,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
