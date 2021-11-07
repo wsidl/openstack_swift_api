@@ -7,8 +7,7 @@ authors = ["Will Siddall <will.siddall@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 # OpenStack
-python-swiftclient = "^3.12.0"
-python-keystoneclient = "^4.3.0"
+openstacksdk = "^0.59.0"
 # Server/DB
 Flask = "^2.0.2"
 psycopg2-binary = "^2.9.1"

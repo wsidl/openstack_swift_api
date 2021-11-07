@@ -47,7 +47,7 @@ def get_object_list(search: str = "") -> Response:
     m_objs = {
         obj.hash_string: obj for obj in [metadata.get_object(m_oid) for m_oid in m_ids]
     }
-    os_response = object_store.get_object(list(m_objs))
+    os_response = object_store.list_objects(*list(m_objs))
     if not os_response[c.RESP_SUCCESS]:
         raise bad_response(os_response[c.RESP_CONTENT])
     for obj in os_response[c.RESP_CONTENT]:
