@@ -58,7 +58,7 @@ def get_object_list(search: str = "") -> Response:
                 "name": m_obj.name,
                 "size": obj.size,
                 "updated": obj.updated,
-                "metadata": m_obj.all_metadata()
+                "metadata": m_obj.all_metadata(),
             }
         )
     return good_response(objects)
@@ -70,8 +70,7 @@ def add_object():
     if not new_file:
         return bad_response("No file was submitted")
     file_path = path.join(
-        app.config["UPLOAD_FOLDER"],
-        utils.secure_filename(new_file.filename)
+        app.config["UPLOAD_FOLDER"], utils.secure_filename(new_file.filename)
     )
     new_file.save(file_path)
     file_contents = open(file_path, "rb")

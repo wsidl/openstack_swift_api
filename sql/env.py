@@ -67,7 +67,7 @@ def run_migrations_online():
         password=os.environ.get("PG_PASSWORD"),
         host=os.environ.get("PG_HOST", "127.0.0.1"),
         port=int(os.environ.get("PG_PORT", 5432)),
-        db=os.environ.get("PG_DBNAME")
+        db=os.environ.get("PG_DBNAME"),
     )
     connectable = engine_from_config(
         alembic_section,
@@ -76,9 +76,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

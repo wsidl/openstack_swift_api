@@ -11,20 +11,22 @@ COL_MKEY = "m_key"
 COL_MVAL = "m_value"
 
 dotenv.load_dotenv()
-engine = sa.create_engine("postgresql://{u}:{w}@{h}:{p}/{d}".format(
-    u=os.environ.get("PG_USER"),
-    w=os.environ.get("PG_PASSWORD"),
-    h=os.environ.get("PG_HOST", "127.0.0.1"),
-    p=int(os.environ.get("PG_PORT", 5432)),
-    d=os.environ.get("PG_DBNAME")
-))
+engine = sa.create_engine(
+    "postgresql://{u}:{w}@{h}:{p}/{d}".format(
+        u=os.environ.get("PG_USER"),
+        w=os.environ.get("PG_PASSWORD"),
+        h=os.environ.get("PG_HOST", "127.0.0.1"),
+        p=int(os.environ.get("PG_PORT", 5432)),
+        d=os.environ.get("PG_DBNAME"),
+    )
+)
 __meta = sa.MetaData()
 _objects = sa.Table(
     "objects",
     __meta,
     sa.Column(COL_OID, sa.Integer, primary_key=True, autoincrement=True),
     sa.Column(COL_OHASH, sa.String(40), unique=True),
-    sa.Column(COL_ONAME, sa.Text)
+    sa.Column(COL_ONAME, sa.Text),
 )
 _metadata = sa.Table(
     "metadata",
@@ -88,19 +90,20 @@ def set_metadata(object_id: int, *metadata: T_META_SET) -> None:
 def remove_metadata(object_id: int, *metadata: T_META_SET) -> None:
     with engine.connect() as conn:
         for key, value in metadata:
-            conn.execute(_metadata.delete().where(
-                _metadata.c.o_id == object_id,
-                _metadata.c.m_key == key,
-                _metadata.c.m_value == value
-            ))
+            conn.execute(
+                _metadata.delete().where(
+                    _metadata.c.o_id == object_id,
+                    _metadata.c.m_key == key,
+                    _metadata.c.m_value == value,
+                )
+            )
 
 
 # Object Queries
 def add_object(object_name: str, hash_str: str, *metadata: T_META_SET) -> int:
     with engine.connect() as conn:
         o_id = conn.execute(
-            _objects.insert(),
-            {COL_ONAME: object_name, COL_OHASH: hash_str}
+            _objects.insert(), {COL_ONAME: object_name, COL_OHASH: hash_str}
         ).inserted_primary_key[0]
         set_metadata(o_id, *metadata)
         return o_id
@@ -143,8 +146,8 @@ def get_object(name_or_id: typing.Union[str, int]) -> Object:
     with engine.connect() as conn:
         obj = conn.execute(o_query).fetchone()
         return Object(
-            obj.o_id, obj.o_hash, obj.o_name, [
-                Metadata(m.m_key, m.m_value)
-                for m in conn.execute(m_query)
-            ]
+            obj.o_id,
+            obj.o_hash,
+            obj.o_name,
+            [Metadata(m.m_key, m.m_value) for m in conn.execute(m_query)],
         )

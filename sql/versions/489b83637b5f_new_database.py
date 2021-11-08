@@ -21,7 +21,7 @@ def upgrade():
         "objects",
         sa.Column("o_id", sa.Integer, autoincrement=True, primary_key=True),
         sa.Column("o_hash", sa.Text, unique=True),
-        sa.Column("o_name", sa.Text, unique=True)
+        sa.Column("o_name", sa.Text, unique=True),
     )
     op.create_table(
         "metadata",
