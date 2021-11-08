@@ -6,7 +6,7 @@ import dataclasses
 import os.path
 import random
 import logging
-import constants as c
+import lib.constants as c
 
 SW_DOWNLOAD_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
 
@@ -61,7 +61,7 @@ def generate_hash() -> str:
     return key
 
 
-def add_object(content: bytes) -> c.T_RESPONSE:
+def add_object(content: typing.BinaryIO) -> c.T_RESPONSE:
     new_hash = ""
     while not new_hash:
         new_hash = generate_hash()

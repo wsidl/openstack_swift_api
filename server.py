@@ -3,9 +3,7 @@ from flask import Flask, send_file, jsonify, Response, request
 from werkzeug import utils
 from os import path, mkdir
 import json
-import object_store
-import metadata
-import constants as c
+from lib import object_store, metadata, constants as c
 
 app = Flask(__name__, static_folder="ui/dist", static_url_path="")
 UPLOAD_DIR = "/tmp/_srv"
