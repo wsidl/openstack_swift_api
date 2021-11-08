@@ -13,7 +13,18 @@ SW_DOWNLOAD_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tem
 dotenv.load_dotenv()
 LOG = logging.getLogger(__name__)
 T_OPT_METADATA = typing.Optional[dict[str, str]]
-HASH_KEY = "lz2_6Uveb1BqWx0CPYuo-GT8fKIAyErRm4piQhNgZVdHD9wJMFnsXatkS7jc53OL"
+
+
+def build_hash_key():
+    import string
+    chars = list(string.digits + string.ascii_letters + '-_')
+    new_key = ""
+    while len(chars) > 0:
+        new_key += chars.pop(random.randint(0, len(chars) - 1))
+    return new_key
+
+
+HASH_KEY = build_hash_key()
 KEY_RANGE = len(HASH_KEY) - 1
 _OS_CONNECTION = openstack.connect()
 
